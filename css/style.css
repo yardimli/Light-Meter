@@ -1,0 +1,77 @@
+body {
+	margin:0px;
+}
+
+
+.app-screen {
+	width:360px; 
+	height:640px; 
+	overflow:hidden; 
+	margin : 0 auto;
+	position: relative;
+	
+}
+
+.app-background {
+	width:375px; 
+	height:655px; 
+	-webkit-filter: blur(2px);
+	filter: blur(2px);
+	float:left;
+	z-index:9;
+	position:absolute;
+	top:0px;
+	left:0px;
+	
+	margin: -5px -10px -10px -5px;
+}
+
+
+
+.top-font{
+	margin-top:80px;
+	position: relative;
+	z-index: 99;
+	font-size:70px;
+	color: white;
+	font-family: 'Raleway', sans-serif;
+	font-weight:200;
+	
+	text-align: center;
+	
+	width:360px;
+	
+	border-bottom: 1px solid white;
+}
+
+.top-font-float-right{
+	position:absolute;
+	z-index: 99;
+	font-size:45px;
+	bottom:0px;
+	right:0px;
+	color: white;
+	font-family: 'Raleway', sans-serif;
+	font-weight:200;
+	margin-right:10px;
+	
+}
+
+
+.middle-font{
+	margin-top:50px;
+	position: relative;
+	z-index: 99;
+	font-size:60px;
+	color: white;
+	font-family: 'Raleway', sans-serif;
+	font-weight:200;
+	
+	text-align: center;
+	
+	width:360px;
+	
+	border-bottom: 1px solid white;
+	
+	
+}
