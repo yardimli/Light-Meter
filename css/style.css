@@ -1,3 +1,11 @@
+* {
+            -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+            -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+            -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+            -webkit-user-select: none;                 /* prevent copy paste, to allow, change 'none' to 'text' */
+
+}
+	
 body {
 	margin:0px;
 }
@@ -18,7 +26,7 @@ body {
 	-webkit-filter: blur(2px);
 	filter: blur(2px);
 	float:left;
-	z-index:9;
+	z-index:8;
 	position:absolute;
 	top:0px;
 	left:0px;
@@ -26,6 +34,20 @@ body {
 	margin: -5px -10px -10px -5px;
 }
 
+.app-background-darkener {
+	width:375px; 
+	height:655px; 
+	float:left;
+	z-index:9;
+	position:absolute;
+	top:0px;
+	left:0px;
+	background-color: #000;
+	opacity: 0.4;
+	
+	
+	margin: -5px -10px -10px -5px;
+}
 
 
 .top-font{
@@ -47,7 +69,7 @@ body {
 .top-font-float-right{
 	position:absolute;
 	z-index: 99;
-	font-size:45px;
+	font-size:40px;
 	bottom:0px;
 	right:0px;
 	color: white;
@@ -59,10 +81,10 @@ body {
 
 
 .middle-font{
-	margin-top:50px;
+	padding-top:20px;
 	position: relative;
 	z-index: 99;
-	font-size:60px;
+	font-size:50px;
 	color: white;
 	font-family: 'Raleway', sans-serif;
 	font-weight:200;
@@ -74,4 +96,29 @@ body {
 	border-bottom: 1px solid white;
 	
 	
+}
+
+
+
+.swiper-container {
+	width: 360px;
+	height: 65px;
+	margin: 0px;
+}
+
+.swiper-slide {
+	color:#fff;
+	text-align: center;
+	line-height: 40px;
+}
+
+.fake-button {
+	cursor: pointer;
+	width:75px;
+	text-align: right;
+}
+
+.lock-this {
+	background: rgba(0,0,0,0.5);
+
 }
