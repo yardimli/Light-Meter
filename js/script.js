@@ -1,31 +1,33 @@
 //http://photo.stackexchange.com/questions/35089/how-can-i-measure-luminance-values-from-different-cameras
 //http://www.sekonic.com/support/evluxfootcandleconversionchart.aspx
 //http://www.calculator.org/calculate-online/photography/exposure.aspx
-
-
-
-var AperatureValuesOld = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16, 22, 32];
-var AperatureIndexOld = 0;
-
-var EvOld = [-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, , 12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5, 17, 17.5, 18];
-var currentEvOld = "?";
-var prevEvValueOld = "?";
-
 //http://www.fredparker.com/ultexp1.htm
-var IsoValuesOld = [25,50,100,200,400,800,1600,3200,6400];
-var IsoEvCorrectionOld = [2,1,0,-1,-2,-3,-4,-5,-6];
-var IsoIndexOld = 2;
 
-var SpeedValuesOld = [-1920,-960,-480,-240,-120,-60,-30,-15,-8,-4,-2,-1, 2, 4, 8, 15, 30, 60, 125, 250, 500, 1000, 2000, 4000, 8000, 15000, 30000, 60000, 125000, 250000, 500000, 1000000 ];
-var SpeedIndexOld = 0;
-// Index 9 of SpeedValues = 4 sec
-// Index 15 of SpeedValues = 1/15 sec
+function round(value, exp) {
+  if (typeof exp === 'undefined' || +exp === 0)
+    return Math.round(value);
+
+  value = +value;
+  exp  = +exp;
+
+  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
+    return NaN;
+
+  // Shift
+  value = value.toString().split('e');
+  value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
+
+  // Shift back
+  value = value.toString().split('e');
+  return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
+}
+
 
 
 ////--------------
 
-var AperatureValues = [0.7,0.8,0.9, 1.0,1.1,1.2, 1.4,1.6,1.8, 2,2.2,2.5, 2.8,3.2,3.5, 4,4.5,5.0, 5.6,6.3,7.1, 8,9,10, 11,13,14, 16,18,20, 22];
-var AperatureIndex = 6;
+var ApertureValues = [0.7,0.8,0.9, 1.0,1.1,1.2, 1.4,1.6,1.8, 2,2.2,2.5, 2.8,3.2,3.5, 4,4.5,5.0, 5.6,6.3,7.1, 8,9,10, 11,13,14, 16,18,20, 22];
+var ApertureIndex = 6;
 
 var currentEv = "?";
 var prevEvValue = "?";
@@ -46,10 +48,52 @@ var SpeedIndex = 0;
 
 
 
+/*
+
+EV = log2(E * S / C) 
+
+E = lux
+S = iso
+C = constant 
+
+adjustedEV = log2(lux * iso100 / C) + log2( iso /100)
+
+----
+LV = log2 (f-number^2 / shutter speed / ISO/100)
+LV:
+1
+
+hemispherical receptor with C = 330
+flat receptor with C = 250
+--------------------------------- 
+N2/t = (E * S) / C 
+
+EV = log2( apperture2 / t) 
+
+N is the relative aperture (f-number)
+t is the exposure time (“shutter speed”) in seconds
+L is the average scene luminance
+S is the ISO arithmetic speed
+K is the reflected-light meter calibration constant
+
+ */
+
+
+
+var Ev2 = round( Math.log2( (250 * 100) / 250 ) + Math.log2( 100/100) , 2);
+console.log( Ev2 );
 
 
 
 
+var Iso100 = 100;
+var CConstant = 250;
+var CurrentLux = 500;
+var adjustedEV = 0;
+
+var swiperspeed;
+var swiperiso;
+var swiperaperture;
 
 
 
@@ -61,32 +105,32 @@ Ev.forEach( function(EvValue) {
 });
 */
 
-
+/*
 SpeedValues.forEach( function(ShutterSpeed) { 
 	
 	if (ShutterSpeed<0) { ShutterSpeed = ShutterSpeed*(-1); } else { ShutterSpeed = 1/ShutterSpeed; }
 
     var outputStr = "ShutterSpeed:"+ShutterSpeed+" -- ";
     
-    AperatureValues.forEach( function(Apperature) { 
-        outputStr += "Ap:" + (Math.round(Apperature*100,2)/100) + "  EV:" + (Math.round( Math.log2(Math.pow(Apperature,2) / ShutterSpeed )*100 ,2 ) /100) + ", ";
+    ApertureValues.forEach( function(Apperture) { 
+        outputStr += "Ap:" + (Math.round(Apperture*100,2)/100) + "  EV:" + (Math.round( Math.log2(Math.pow(Apperture,2) / ShutterSpeed )*100 ,2 ) /100) + ", ";
     });
     
-    console.log(outputStr);
+//    console.log(outputStr);
 });
 
 IsoIndex=4;
-for (var AperatureLIndex = 0;  AperatureLIndex < AperatureValues.length; AperatureLIndex++)
+for (var ApertureLIndex = 0;  ApertureLIndex < ApertureValues.length; ApertureLIndex++)
 {
     var SpeedStr = "";
     for (var EvLIndex=-1; EvLIndex<21; EvLIndex++)
     {
         // Index 9 of SpeedValues = 4 sec
-        SpeedStr += "EV:"+(EvLIndex+IsoEvCorrection[IsoIndex])+" S:"+ SpeedValues[9-(AperatureLIndex-1)+(EvLIndex)] + ", ";
+        SpeedStr += "EV:"+(EvLIndex+IsoEvCorrection[IsoIndex])+" S:"+ SpeedValues[9-(ApertureLIndex-1)+(EvLIndex)] + ", ";
     }
-    console.log("Aperature: "+AperatureLIndex+" "+AperatureValues[AperatureLIndex]+" == "+SpeedStr);
+//    console.log("Aperture: "+ApertureLIndex+" "+ApertureValues[ApertureLIndex]+" == "+SpeedStr);
 }    
-
+*/
 
 console.log("--------------");
 
@@ -95,36 +139,96 @@ function evToLux(ev) {
 }
 
 
-function FindAperature( EvLIndex, IsoLIndex, SpeedLIndex )
+
+
+
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+function DecideISO( ApertureVal, SpeedVal, UpdateDisplay )
 {
-    for (var AperatureLIndex = 0;  AperatureLIndex < AperatureValues.length; AperatureLIndex++)
-    {
-        var SpeedStr = "";
-        // Index 9 of SpeedValues = 4 sec
-        SpeedStr += "EV:"+(EvLIndex+IsoEvCorrection[IsoLIndex])+" S:"+ SpeedValues[9-(AperatureLIndex-1)+(EvLIndex)] + ", ";
-        
-        console.log("Aperature: "+AperatureLIndex+" "+AperatureValues[AperatureLIndex]+" == "+SpeedStr);
-    }    
+	
 }
 
-//ISO 100, EV: 4.5, Speed: 1/15
-FindAperature( 11, 2, 15 );
-
-function FindSpeed( EvLIndex,  AperatureLIndex)
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+function DecideAperture( SpeedIndexX,UpdateDisplay )
 {
-    
+	var FoundApertureIndex =-1;
+	var PrevApertureIndex = 0;
+	
+	var SpeedValue = SpeedValues[SpeedIndexX];
+	if (SpeedValue<0) { SpeedValue = SpeedValue*(-1); } else { SpeedValue = 1/SpeedValue; }
+	
+	for (var i=0; i<ApertureValues.length; i++)
+	{
+		var Ev3 = Math.log2( Math.pow(ApertureValues[i],2) / SpeedValue );
+		
+		if (Ev3>adjustedEV) {
+			FoundApertureIndex = PrevApertureIndex;
+			break;
+		}
+		PrevApertureIndex = i;
+		console.log(SpeedValue+" "+Ev3+" "+ApertureValues[i]);
+	}
+	
+	if ((FoundApertureIndex>=0) && (UpdateDisplay))
+	{
+		console.log("Found Index: "+FoundApertureIndex);
+		ApertureIndex = FoundApertureIndex;
+		swiperaperture.slideTo(ApertureIndex, 500);
+		
+	}
+	
+	return FoundApertureIndex;
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+function DecideSpeed( ApertureIndexX,UpdateDisplay )
+{
+	var FoundSpeedIndex =-1;
+	var PrevSpeedIndex = 0;
+	var ApertureVal = ApertureValues[ApertureIndexX];
+	for (var i=0; i<SpeedValues.length; i++)
+	{
+		var SpeedValue = SpeedValues[i];
+		if (SpeedValue<0) { SpeedValue = SpeedValue*(-1); } else { SpeedValue = 1/SpeedValue; }
+		var Ev3 = Math.log2( Math.pow(ApertureVal,2) / SpeedValue );
+		
+		if (Ev3>adjustedEV) {
+			FoundSpeedIndex = PrevSpeedIndex;
+			break;
+		}
+		PrevSpeedIndex = i;
+		console.log(ApertureVal+" "+Ev3+" "+SpeedValues[i]);
+	}
+	
+	if ((FoundSpeedIndex>=0) && (UpdateDisplay))
+	{
+		SpeedIndex = FoundSpeedIndex;
+		swiperspeed.slideTo(SpeedIndex, 500);
+		
+	}
+	
+	return FoundSpeedIndex;
 }
 
 
-
-
-
-
-
+//-------------------------------------------------------------------------------------------------------------------------------------------------
 function updateConnectText(newtext) {
 	$("#ConnectButtonText").html(" "+newtext);
 }
 
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+function UpdateEV()
+{
+	adjustedEV = round( Math.log2(CurrentLux * Iso100 / CConstant) + Math.log2( IsoValues[IsoIndex] /100) , 2);
+	$("#evvalue").html(adjustedEV);
+	
+}
+
+//--------------------------------
 function updateDataText(newtext) {
 	newtext = newtext.substr(1);
 //	$("#debugdata").html(" "+newtext);
@@ -134,33 +238,24 @@ function updateDataText(newtext) {
 	$("#kelvinreading").html(MeterData["Color Temp."]);
 	$("#luxreading").html(MeterData["Lux"]);
 	
-	LuxInt = parseInt( MeterData["Lux"], 10);
-	
-	j=0;
-	currentEv = "?";
-	prevEvValue = "?";
-	Ev.forEach( function(EvValue) { 
-		if ( (Lux[j]>LuxInt) && (currentEv=="?") ) { currentEv = prevEvValue; }
-		prevEvValue = EvValue;
-//		console.log(EvValue+" = "+Lux[j]);
-		j++;
-	});
-	
-	$("#evvalue").html(currentEv+IsoEvCorrection[IsoIndex]);
-	
-	
-	
-	
-	
+	CurrentLux = parseInt( MeterData["Lux"], 10);
+	UpdateEV();
 }
 
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------
 $(document).ready( function() 
 {
 //	alert(screen.width+" "+screen.height);
 
-	setTimeout(function () { updateDataText(" {\"Color Temp.\":5500, \"Lux\":250} "); },500);
+	setTimeout(function () { 
+		updateDataText(" {\"Color Temp.\":5500, \"Lux\":320} "); 
+	},500);
 			
+	setTimeout(function () { 
+		DecideSpeed(ApertureIndex,true);
+	},1000);
 
 	var flagBLE = false;
 	$("#SelectBLEDevice").on('touchstart click', function ()
@@ -174,11 +269,10 @@ $(document).ready( function()
 	
 
 	//------------ ISO Stuff
-	var iso100number = 0;
-	
+
 	for (var i=0; i< IsoValues.length; i++)
 	{
-		if (IsoValues[i]==100) { iso100number=i;}
+		if (IsoValues[i]==100) { IsoIndex=i;}
 		$("#iso-swiper-wrapper").append("<div class=\"swiper-slide\">" + IsoValues[i] + "</div>");
 	}
 	
@@ -189,7 +283,7 @@ $(document).ready( function()
 			flagISO = true;
 			setTimeout(function(){ flagISO = false; }, 250);
 
-			$("#aperature-container").removeClass("lock-this");
+			$("#aperture-container").removeClass("lock-this");
 			$("#speed-container").removeClass("lock-this");
 
 			if ($("#iso-container").hasClass("lock-this")) {
@@ -203,35 +297,33 @@ $(document).ready( function()
 	});
 	
 	
-    var swiperiso = new Swiper('#iso-swiper-container', {
-			initialSlide: iso100number,
-            spaceBetween: 50,
-            slidesPerView: 1,
-            centeredSlides: true,
-            slideToClickedSlide: true,
-            grabCursor: true,
-            nextButton: null,
-            prevButton: null,
-            scrollbar: null,
-			scrollbarHide : true,
-			
-        });	
+	swiperiso = new Swiper('#iso-swiper-container', {
+		initialSlide: IsoIndex,
+		spaceBetween: 50,
+		slidesPerView: 1,
+		centeredSlides: true,
+		slideToClickedSlide: true,
+		grabCursor: true,
+		nextButton: null,
+		prevButton: null,
+		scrollbar: null,
+		scrollbarHide : true,
+	});
 
-        swiperiso.on('slideChangeEnd', function () {
-                IsoIndex=swiperiso.activeIndex;
-                $("#evvalue").html(currentEv+IsoEvCorrection[IsoIndex]);
-        });	
+	swiperiso.on('slideChangeEnd', function () {
+		IsoIndex=swiperiso.activeIndex;
+		UpdateEV();
+		DecideSpeed(ApertureIndex,true);
+	});	
 
 		
 		
 		
 	//------------ aperture Stuff
-	var aperturedefnumber = 0;
-	
-	for (var i=0; i< AperatureValues.length; i++)
+	for (var i=0; i< ApertureValues.length; i++)
 	{
-		if (AperatureValues[i]==4) { aperturedefnumber=i;}
-		$("#aperture-swiper-wrapper").append("<div class=\"swiper-slide\">" + AperatureValues[i] + "</div>");
+		if (ApertureValues[i]==4) { ApertureIndex=i;}
+		$("#aperture-swiper-wrapper").append("<div class=\"swiper-slide\">" + ApertureValues[i] + "</div>");
 	}
 	
 	var flagaperture = false;
@@ -244,18 +336,18 @@ $(document).ready( function()
 			$("#iso-container").removeClass("lock-this");
 			$("#speed-container").removeClass("lock-this");
 
-			if ($("#aperature-container").hasClass("lock-this")) {
-				$("#aperature-container").removeClass("lock-this");
+			if ($("#aperture-container").hasClass("lock-this")) {
+				$("#aperture-container").removeClass("lock-this");
 			} else
 			{
-				$("#aperature-container").addClass("lock-this");
+				$("#aperture-container").addClass("lock-this");
 			}
 		}
 	});
 	
 	
-    var swiperaperature = new Swiper('#aperature-swiper-container', {
-			initialSlide: aperturedefnumber,
+    swiperaperture = new Swiper('#aperture-swiper-container', {
+			initialSlide: ApertureIndex,
             spaceBetween: 50,
             slidesPerView: 1,
             centeredSlides: true,
@@ -267,19 +359,17 @@ $(document).ready( function()
 			scrollbarHide : true,
         });	
 		
-	swiperaperature.on('slideChangeEnd', function () {
-		AperatureIndex=swiperaperature.activeIndex;
-//		$("#evvalue").html(currentEv+IsoEvCorrection[IsoIndex]);
+	swiperaperture.on('slideChangeEnd', function () {
+		ApertureIndex=swiperaperture.activeIndex;
+		DecideSpeed(ApertureIndex,true);
 	});	
 
 
 	
 	//------------ shutter speed Stuff
-	var speeddefnumber = 0;
-	
 	for (var i=0; i< SpeedValues.length; i++)
 	{
-		if (SpeedValues[i]==125) { speeddefnumber=i;}
+		if (SpeedValues[i]==125) { SpeedIndex=i;}
 		
 //						   <div class="swiper-slide"><span style="font-size:25px; vertical-align: super;">1</span>/500</div>
 		if (SpeedValues[i]<0) { 
@@ -304,7 +394,7 @@ $(document).ready( function()
 			setTimeout(function(){ flagspeed = false; }, 250);
 
 			$("#iso-container").removeClass("lock-this");
-			$("#aperature-container").removeClass("lock-this");
+			$("#aperture-container").removeClass("lock-this");
 
 			if ($("#speed-container").hasClass("lock-this")) {
 				$("#speed-container").removeClass("lock-this");
@@ -316,8 +406,8 @@ $(document).ready( function()
 	});
 	
 	
-    var swiperspeed = new Swiper('#speed-swiper-container', {
-			initialSlide: speeddefnumber,
+    swiperspeed = new Swiper('#speed-swiper-container', {
+			initialSlide: SpeedIndex,
             spaceBetween: 50,
             slidesPerView: 1,
             centeredSlides: true,
@@ -331,12 +421,14 @@ $(document).ready( function()
 	
 	swiperspeed.on('slideChangeEnd', function () {
 		SpeedIndex=swiperspeed.activeIndex;
-                if ( SpeedValues[SpeedIndex]<=-60 ) {
-                    $("#funit").html("min");
-                } else
-                {
-                    $("#funit").html("sec");
-                }
+		if ( SpeedValues[SpeedIndex]<=-60 ) {
+			$("#funit").html("min");
+		} else
+		{
+			$("#funit").html("sec");
+		}
+		DecideAperture(SpeedIndex,true);
+		
 //		$("#evvalue").html(currentEv+IsoEvCorrection[IsoIndex]);
 	});	
 		
