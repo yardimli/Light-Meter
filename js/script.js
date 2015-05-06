@@ -200,14 +200,13 @@ function DecideSpeed( ApertureIndexX,UpdateDisplay )
 			break;
 		}
 		PrevSpeedIndex = i;
-		console.log(ApertureVal+" "+Ev3+" "+SpeedValues[i]);
+//		console.log(ApertureVal+" "+Ev3+" "+SpeedValues[i]);
 	}
 	
 	if ((FoundSpeedIndex>=0) && (UpdateDisplay))
 	{
 		SpeedIndex = FoundSpeedIndex;
 		swiperspeed.slideTo(SpeedIndex, 500);
-		
 	}
 	
 	return FoundSpeedIndex;
@@ -255,7 +254,7 @@ $(document).ready( function()
 			
 	setTimeout(function () { 
 		DecideSpeed(ApertureIndex,true);
-	},1000);
+	},2000);
 
 	var flagBLE = false;
 	$("#SelectBLEDevice").on('touchstart click', function ()
@@ -319,50 +318,6 @@ $(document).ready( function()
 		
 		
 		
-	//------------ aperture Stuff
-	for (var i=0; i< ApertureValues.length; i++)
-	{
-		if (ApertureValues[i]==4) { ApertureIndex=i;}
-		$("#aperture-swiper-wrapper").append("<div class=\"swiper-slide\">" + ApertureValues[i] + "</div>");
-	}
-	
-	var flagaperture = false;
-	$("#apertureButton").on('touchstart click', function () {
-		
-		if (!flagaperture) {
-			flagaperture = true;
-			setTimeout(function(){ flagaperture = false; }, 250);
-
-			$("#iso-container").removeClass("lock-this");
-			$("#speed-container").removeClass("lock-this");
-
-			if ($("#aperture-container").hasClass("lock-this")) {
-				$("#aperture-container").removeClass("lock-this");
-			} else
-			{
-				$("#aperture-container").addClass("lock-this");
-			}
-		}
-	});
-	
-	
-    swiperaperture = new Swiper('#aperture-swiper-container', {
-			initialSlide: ApertureIndex,
-            spaceBetween: 50,
-            slidesPerView: 1,
-            centeredSlides: true,
-            slideToClickedSlide: true,
-            grabCursor: true,
-            nextButton: null,
-            prevButton: null,
-            scrollbar: null,
-			scrollbarHide : true,
-        });	
-		
-	swiperaperture.on('slideChangeEnd', function () {
-		ApertureIndex=swiperaperture.activeIndex;
-		DecideSpeed(ApertureIndex,true);
-	});	
 
 
 	
@@ -431,6 +386,52 @@ $(document).ready( function()
 		
 //		$("#evvalue").html(currentEv+IsoEvCorrection[IsoIndex]);
 	});	
+
+	
+	//------------ aperture Stuff
+	for (var i=0; i< ApertureValues.length; i++)
+	{
+		if (ApertureValues[i]==4) { ApertureIndex=i;}
+		$("#aperture-swiper-wrapper").append("<div class=\"swiper-slide\">" + ApertureValues[i] + "</div>");
+	}
+	
+	var flagaperture = false;
+	$("#apertureButton").on('touchstart click', function () {
 		
+		if (!flagaperture) {
+			flagaperture = true;
+			setTimeout(function(){ flagaperture = false; }, 250);
+
+			$("#iso-container").removeClass("lock-this");
+			$("#speed-container").removeClass("lock-this");
+
+			if ($("#aperture-container").hasClass("lock-this")) {
+				$("#aperture-container").removeClass("lock-this");
+			} else
+			{
+				$("#aperture-container").addClass("lock-this");
+			}
+		}
+	});
+	
+	
+    swiperaperture = new Swiper('#aperture-swiper-container', {
+			initialSlide: ApertureIndex,
+            spaceBetween: 50,
+            slidesPerView: 1,
+            centeredSlides: true,
+            slideToClickedSlide: true,
+            grabCursor: true,
+            nextButton: null,
+            prevButton: null,
+            scrollbar: null,
+			scrollbarHide : true,
+        });	
+		
+	swiperaperture.on('slideChangeEnd', function () {
+		ApertureIndex=swiperaperture.activeIndex;
+		DecideSpeed(ApertureIndex,true);
+	});	
+	
 		
 });
