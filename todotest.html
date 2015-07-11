@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+	<head>
+		<title>TODO supply a title</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link href="css/bootstrap.css" rel="stylesheet">
+		
+		<script src="js/jquery-2.1.3.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		
+	</head>
+	<style>
+		.done-item { background-color: red; }
+		.todo-item { background-color: blue; }
+	</style>
+	
+	<script>
+$(document).ready( function() 
+{
+	
+	function doneitemstuff(xthis)
+	{
+
+		var selecteditem = xthis.attr("ID");
+		var splititem = selecteditem.split("_");
+		alert(splititem[1]);
+		
+	}
+	
+	$(".done-item").bind("click", function() {
+		doneitemstuff($(this));
+	});
+	
+	$(".todo-item").bind("click", function() {
+		
+		var selecteditem = $(this).attr("ID");
+		var splititem = selecteditem.split("_");
+		//alert(splititem[1]);
+
+		
+		$(this).off('click');
+		$(this).bind("click", function () { doneitemstuff($(this)); });
+
+		var xthis = this;
+		$(this).fadeOut(500, function() {
+			$("#donelist").append($(xthis));
+			$(xthis).removeClass("todo-item");
+			$(xthis).addClass("done-item");
+			
+		
+			$(xthis).fadeIn(500);
+		});
+		
+	});
+	
+});
+	</script>
+	<body>
+		<div style="border:1px solid #aaa; width: 540px; height:420px; margin: 20px auto; padding: 20px; overflow: hidden;">
+			<div id="todolist" style="border:1px solid #aaa; width: 500px; height:180px; margin-bottom: 20px; padding: 20px;">
+				ToDo List<br>
+				
+				<div class="todo-item" style="border:1px solid #aaa; margin-bottom: 20px; padding: 5px; cursor: pointer;" id="item_1">
+					Buy Milk
+					</div>
+				
+			</div>
+
+			<div id="donelist" style="border:1px solid #aaa; width: 500px; height:180px; padding: 20px;">
+				Done List<br>
+				<div class="done-item" style="border:1px solid #aaa; margin-bottom: 20px; padding: 5px; cursor: pointer;" id="item_2">
+					Buy Cat food
+					</div>
+			</div>
+		<div>
+		
+	</body>
+</html>

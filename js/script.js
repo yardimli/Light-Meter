@@ -1,7 +1,14 @@
 //http://photo.stackexchange.com/questions/35089/how-can-i-measure-luminance-values-from-different-cameras
 //http://www.sekonic.com/support/evluxfootcandleconversionchart.aspx
 //http://www.calculator.org/calculate-online/photography/exposure.aspx
+//
 //http://www.fredparker.com/ultexp1.htm
+//http://www.scantips.com/lights/fstop.html
+//http://home.earthlink.net/~kitathome/LunarLight/moonlight_gallery/technique/LightAndCamera.htm
+//http://en.wikipedia.org/wiki/Exposure_value#EV_as_a_measure_of_luminance_and_illuminance
+//http://www.calculator.org/calculate-online/photography/exposure.aspx
+//http://www.fredparker.com/ultexp1.htm
+
 
 function round(value, exp) {
   if (typeof exp === 'undefined' || +exp === 0)
@@ -33,7 +40,6 @@ var currentEv = "?";
 var prevEvValue = "?";
 var Lux = [1.25, 1.75, 2.5, 3.5, 5, 7, 10, 14, 20, 28, 40, 56, 80, 112, 160, 225, 320, 450, 640, 900, 1280, 1800, 2600, 3600, 5120, 7200, 10240, 14400, 20480, 28900, 40960, 57800, 81900, 116000, 164000, 232000, 328000, 464000, 656000 ];
 
-//http://www.fredparker.com/ultexp1.htm
 
 var IsoValues =       [6,8,10,        12,16,20,       25,32,40,       50,64,80,       100,125,160, 200,250,320, 400,500,640, 800,1000,1280, 1600,2000,2500,  3200,4000,5000,  6400 ];
 var IsoEvCorrection = [-4,-3.67,3.33, -3,-2.67,-2.33, -2,-1.67,-1.33, -1,-0.67,-0.33, 0,0.33,0.67, 1,1.33,1.67, 2,2.33,2.67, 3,3.33,3.67,   4,4.33,4.67,     5,5.33,5.67,     6];
@@ -87,8 +93,8 @@ console.log( Ev2 );
 
 
 var Iso100 = 100;
-var CConstant = 250;
-var CurrentLux = 500;
+var CConstant = 125;
+var CurrentLux = 77;
 var adjustedEV = 0;
 
 var swiperspeed;
@@ -249,7 +255,7 @@ $(document).ready( function()
 //	alert(screen.width+" "+screen.height);
 
 	setTimeout(function () { 
-		updateDataText(" {\"Color Temp.\":5500, \"Lux\":320} "); 
+		updateDataText(" {\"Color Temp.\":5500, \"Lux\":77} "); 
 	},500);
 			
 	setTimeout(function () { 
